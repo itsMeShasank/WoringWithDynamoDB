@@ -1,3 +1,4 @@
+/*
 package com.epam.webapp;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -32,3 +33,4 @@ public class DynamoDBConfig {
                 .build();
     }
 }
+*/

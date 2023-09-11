@@ -1,3 +1,4 @@
+/*
 package com.epam.webapp;
 
 
@@ -8,3 +9,4 @@ import org.springframework.stereotype.Repository;
 public interface StudentRepository extends CrudRepository<Student, String> {
 }
 
+*/
