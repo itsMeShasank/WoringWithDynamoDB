@@ -1,7 +1,7 @@
 package com.epam.webapp;
 
 
-import org.springframework.core.serializer.Serializer;
+import lombok.ToString;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 
@@ -9,7 +9,8 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @DynamoDbBean
-public class Student implements Serializable {
+@ToString
+public class Student {
 
     private UUID id;
     private String name;

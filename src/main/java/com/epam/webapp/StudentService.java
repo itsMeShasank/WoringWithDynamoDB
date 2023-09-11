@@ -1,7 +1,10 @@
 package com.epam.webapp;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.dynamodb.DynamoDbTemplate;
+import io.awspring.cloud.sqs.operations.SqsTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
@@ -17,10 +20,12 @@ import java.util.UUID;
 public class StudentService {
 
     private final DynamoDbTemplate dynamoDbTemplate;
+    private final SqsTemplate sqsTemplate;
 
     @Autowired
-    public StudentService(DynamoDbTemplate dynamoDbTemplate) {
+    public StudentService(DynamoDbTemplate dynamoDbTemplate, SqsTemplate sqsTemplate) {
         this.dynamoDbTemplate = dynamoDbTemplate;
+        this.sqsTemplate = sqsTemplate;
     }
 
     public Optional<Student> getStudentById(UUID id) {
@@ -38,7 +43,18 @@ public class StudentService {
 
     public Student saveStudent(Student student) {
         student.setId(UUID.randomUUID());
+        sendToQueue(student);
         return dynamoDbTemplate.save(student);
+    }
+
+    private void sendToQueue(Student student) {
+        sqsTemplate.send(to -> {
+            try {
+                to.queue("student-queue").payload(new ObjectMapper().writeValueAsString(student));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public Student updateStudent(UUID id,Student student) {
